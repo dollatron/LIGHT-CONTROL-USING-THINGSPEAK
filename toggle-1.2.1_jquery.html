@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+    
+<head><meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+        </script>
+   
+    <title>toggle switch</title>
+      
+    <style>
+        h1 {
+            color: green;
+        }
+                
+        /* toggle in label designing */
+        .toggle {
+            position : relative ;
+            display : inline-block;
+            width : 100px;
+            height : 52px;
+             background-color:rgb(135, 151, 148);
+            border-radius: 30px;
+            border: 2px solid gray;
+        }
+                
+        /* After slide changes */
+        .toggle:after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgb(38, 195, 206);
+            top: 1px; 
+            left: 1px;
+            transition:  all 0.5s;
+        }
+                
+        /* Toggle text */
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+                
+        /* Checkbox checked effect */
+        .checkbox:checked + .toggle::after {
+            left : 49px; 
+        }
+                
+        /* Checkbox checked toggle label bg color */
+        .checkbox:checked + .toggle {
+             background-color:rgb(135, 151, 148);
+        }
+                
+        /* Checkbox vanished */
+          .checkbox { 
+            display : none;
+        }
+        .on{
+            background-color: green;
+        }
+    </style>
+</head>
+  
+<body>
+    <center>
+        <h1>DEVICE CONTROL DASHBOARD</h1>
+        <br>
+        <b> Sitting Room </b>
+       <input type="checkbox" id="switch1"
+        class="checkbox" value="the switch is on" />
+<label for="switch1" class="toggle" id="yai">
+            
+<p>ON OFF </p>
+</label> 
+<br> 
+<br> 
+<b> Dining Room</b>
+<input type="checkbox" id="switch2"
+ class="checkbox" value="the switch is on" />
+<label for="switch2" class="toggle" id="yai2">
+    
+<p>ON OFF </p>
+</label>  
+ 
+  
+        
+        <p style="color:#2c3e50;font-weight: bold;font-size: 18px;">ThingSpeak API Key : 
+            <input type="password" id="ts-api-key" class="text" placeholder="ThingSpeak API Key" />
+            <input type="checkbox" onclick="hideapikey()">Show API Key
+        </p>
+        <p style="color:#2c3e50;font-weight: bold;font-size: 18px;">ThingSpeak Channel ID : 
+            <input type="password" id="ts-channel-id" class="text" placeholder="ThingSpeak Channel ID" />
+            <input type="checkbox" onclick="hidechannelid()">Show Channel ID
+        </p>
+        <br>
+        <div>
+			<p style="color:#2c3e50;font-weight: bold;font-size: 12px;">Light Status is : <span id="LIGHTState">Please wait...</span></p>	
+            <button onclick="checkCheckbox()">Submit</button> <br>  	
+    
+    <script type="text/javascript" > 
+    $(document).ready(function(){
+        var ts_channel_id;
+        var ts_api_key; 
+        //localStorage.clear('thingspeak');
+        //checkCheckbox();
+        if (localStorage.getItem('thingspeak')) {
+       
+       console.log(localStorage);
+       thingspeak= JSON.parse(localStorage.getItem('thingspeak'));
+       var shanel =thingspeak.chanel;
+       var apy =thingspeak. ApiKey;
+       console.log("parsed channel="+ shanel);
+       console.log("prsed API KEY="+thingspeak['ApiKey']);
+       document.getElementById('ts-api-key').value=apy;
+       document.getElementById('ts-channel-id').value= shanel;
+       //thingspeak = localStorage.getItem('thingspeaks');
+//thingspeak = JSON.parse(localStorage.getItem('thingspeaks'));
+//console.log("storage result="+ thingspeak['ts_channel_id']);
+//console.log(thingspeak);
+//console.log(thingspeak.ts_channel_id );
+//console.log("storage result="+ thingspeak.ts_channel_id]);
+}
+else {console.log("storage not occupied");}
+   
+    });
+  function checkCheckbox() {  
+ 
+      var togo = document.getElementById("switch1");  
+      var togo1 = document.getElementById("switch2"); 
+      console.log("toggle1 state="+Number(togo.checked) +"\n"+"toggle2 state="+Number(togo1.checked) );
+       ts_channel_id = document.getElementById('ts-channel-id').value;
+         ts_api_key = document.getElementById('ts-api-key').value;
+         updateFeedParams();
+       
+            var url = "http://api.thingspeak.com/update?api_key="+ ts_api_key + "&field1="+Number(togo.checked)+ "&field2="+Number(togo1.checked);
+            $.getJSON(url, function(data) {
+        
+                console.log("sent payloads="+data +"\n" +"url="+url);
+            });
+      // var togo = document.getElementById("switch1").value 6N867GZU9LTUR6CS;   
+      // return document.getElementById("taa").innerHTML = togo 1038512 ; 
+     // checkCheckbox();
+      }  
+      function updateFeedParams() {
+
+// update params
+
+//thingspeak.thingspeak=ts_channel_id;
+const thingspeak = {
+  chanel:  ts_channel_id ,
+  ApiKey: ts_api_key,
+  
+};
+console.log("acess object="+thingspeak. chanel );
+console.log("object created="+thingspeak );
+// save to local storage
+localStorage.setItem("thingspeak", JSON.stringify(thingspeak));
+console.log("stingified="+localStorage);
+//
+randomy=localStorage.getItem('thingspeak');
+JSON.parse(randomy);
+console.log(thingspeak. chanel ); 
+//var thingspeak2 = localStorage.getItem("thingspeak");
+//console.log("storage result="+ thingspeak['ts_channel_id']);
+//console.log("storage object result="+localStorage);
+//console.log(thingspeak2  );
+
+// clear output
+//$('#header').html('');
+//$('#output').html('');
+
+}
+
+
+     
+    /*  else if  (togo.checked == false||togo1.checked ==false ){
+        console.log("slided off");
+        var ts_api_key = document.getElementById('ts-api-key').value;
+            var url = "http://api.thingspeak.com/update?api_key="+ ts_api_key + "&field1="+Number(togo.checked)+ "&field2="+Number(togo1.checked);
+            $.getJSON(url, function(data) {
+                console.log("sent payload="+data +"\n" +"url="+url);
+       // var togo = document.getElementById("switch1").value;   
+       // return document.getElementById("taa").innerHTML = togo; 
+   
+           });
+}*/
+
+
+
+        function hideapikey() {
+            var x = document.getElementById("ts-api-key");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+        function hidechannelid() {
+            var x = document.getElementById("ts-channel-id");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+        
+     
+
+        
+        setInterval(function() {
+        // Call a function repetatively with 15 Second interval
+            getThingSpeakLightState();
+        }, 14000);
+        
+        function getThingSpeakLightState() {
+            var ts_channel_id = document.getElementById('ts-channel-id').value;
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var myObj = JSON.parse(this.responseText);
+                    console.log("result="+this.responseText);
+                    if (myObj.field1 == 1 && myObj.field2 == 1) {
+                      
+                        document.getElementById("LIGHTState").innerHTML = "ON";
+                       document.getElementById("yai").style.backgroundColor="green";
+                       document.getElementById("yai2").style.backgroundColor="green";
+                      }
+                      if (myObj.field1 == 1 && myObj.field2 == 0) {
+                      
+                      document.getElementById("LIGHTState").innerHTML = "ON";
+                     document.getElementById("yai").style.backgroundColor="green";
+                     document.getElementById("yai2").style.backgroundColor="red";
+                    }
+                    if (myObj.field1 == 0 && myObj.field2 == 1) {
+                      
+                      document.getElementById("LIGHTState").innerHTML = "ON";
+                     document.getElementById("yai").style.backgroundColor="red";
+                     document.getElementById("yai2").style.backgroundColor="green";
+                    }
+                    if (myObj.field1 == 0 && myObj.field2 == 0) {
+                      
+                      document.getElementById("LIGHTState").innerHTML = "ON";
+                     document.getElementById("yai").style.backgroundColor="red";
+                     document.getElementById("yai2").style.backgroundColor="red";
+                    }
+                      //  $('#yai').addClass("on");
+                       /* document.getElementById("LightImage").src=" data:image/png;base64,
+                        */
+
+          
+                }
+            };
+            xhttp.open("GET", "https://api.thingspeak.com/channels/" + ts_channel_id + "/feeds/last.json", true);
+          //  xhttp.open("GET", "https://api.thingspeak.com/channels/" + ts_channel_id + "/fields/1/last.json", true);
+            xhttp.send();
+        }
+    </script>
+</center>
+</body>
+  
+</html>
